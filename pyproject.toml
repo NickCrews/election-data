@@ -1,0 +1,18 @@
+[project]
+name = "election-data"
+version = "0.1.0"
+description = "cleaned and normalized US election data"
+authors = [
+    {name = "Nick Crews", email = "nicholas.b.crews@gmail.com"},
+]
+dependencies = [
+    "ibis-framework[duckdb]>=9.0.0.dev665",
+    "ipykernel",
+]
+requires-python = ">=3.9"
+readme = "README.md"
+license = {text = "MIT"}
+
+
+[tool.pdm]
+distribution = false
