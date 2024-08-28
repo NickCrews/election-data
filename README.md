@@ -54,13 +54,3 @@ t
 
 See https://github.com/NickCrews/election-data/releases for
 available versions to download, or the notebooks for methodology.
-
-
-# Dev notes (for me)
-
-```bash
-TAG="v2024-04-25_0"
-git tag $TAG
-git push --tags
-gh release create --notes "" $TAG data/cleaned.parquet
-```
