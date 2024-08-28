@@ -12,6 +12,7 @@
 // copied from https://perspective.finos.org/block/?example=file
 
 import perspective from "https://cdn.jsdelivr.net/npm/@finos/perspective@3.0.0/dist/cdn/perspective.js";
+import { Octokit } from "https://esm.sh/octokit";
 
 window.addEventListener("DOMContentLoaded", async function () {
     const worker = await perspective.worker();
@@ -81,12 +82,26 @@ window.addEventListener("DOMContentLoaded", async function () {
 
     function uploadFile(file) {
         let reader = new FileReader();
-        reader.onload = function (fileLoadedEvent) {
-            loadData(fileLoadedEvent.target.result);
+        let type;
+        if (file.name.endsWith(".feather") || file.name.endsWith(".arrow")) {
+            type = "arrow";
+        } else if (file.name.endsWith(".parquet") || file.name.endsWith(".pq")) {
+            type = "parquet";
+        } else {
+            type = "csv";
+        }
+
+        
+        reader.onload = async function (fileLoadedEvent) {
+            let data = fileLoadedEvent.target.result;
+            if (type === "parquet") {
+                data = await parquetToArrow(data);
+            }
+            loadData(data);
         };
 
         // Read the contents of the file - triggering the onload when finished.
-        if (file.name.endsWith(".feather") || file.name.endsWith(".arrow")) {
+        if (type === "arrow" || type === "parquet") {
             reader.readAsArrayBuffer(file);
         } else {
             reader.readAsText(file);
@@ -94,32 +109,48 @@ window.addEventListener("DOMContentLoaded", async function () {
     }
 
     // fetch parquet data from releases
-    const releases = await fetch("https://api.github.com/repos/NickCrews/election-data/releases");
-    const data = await releases.json();
-    console.log(data);
-    var releaseSelect = document.getElementById("releaseSelect");
-    releaseSelect.innerHTML = "";
-    data.forEach((release) => {
-        var option = document.createElement("option");
-        option.text = release.tag_name;
-        option.value = release.assets[0].browser_download_url;
-        releaseSelect.add(option);
-    });
-    var loadRelease = document.getElementById("loadRelease");
-    loadRelease.addEventListener("click", async function () {
-        const selected = releaseSelect.options[releaseSelect.selectedIndex].value;
-        const response = await fetch(selected);
-        console.log(response);
-        // transform the parquet file to arrow
-        const parquetData = await response.arrayBuffer();
-        const arrowData = await parquetToArrow(parquetData);
-        loadData(arrowData);
-    });
+    // const releases = await fetch("https://api.github.com/repos/NickCrews/election-data/releases");
+    // const data = await releases.json();
+    // console.log(data);
+    // var releaseSelect = document.getElementById("releaseSelect");
+    // releaseSelect.innerHTML = "";
+    // data.forEach((release) => {
+    //     var option = document.createElement("option");
+    //     option.text = release.tag_name;
+    //     var url = release.assets[0].url;
+    //     // url = "https://cors-proxy.htmldriven.com/?url=" + url;
+    //     option.value = url;
+    //     console.log(option.value);
+    //     releaseSelect.add(option);
+    // });
+    // var loadRelease = document.getElementById("loadRelease");
+    // loadRelease.addEventListener("click", async function () {
+    //     const selected = releaseSelect.options[releaseSelect.selectedIndex].value;
+    //     const GITHUB_TOKEN = "github_pat_***";
+    //     const octokit = new Octokit({ auth: GITHUB_TOKEN });
+    //     const response = await fetch(selected, {
+    //         headers: {
+    //             Accept: "application/octet-stream",
+    //             Authorization: "Bearer " + GITHUB_TOKEN,
+    //             "X-GitHub-Api-Version": "2022-11-28",
+    //             // "User-Agent": "",
+    //         },
+    //     });
+    //     console.log(response);
+    //     console.log(await response.text());
+
+    //     // transform the parquet file to arrow
+    //     const parquetData = await response.arrayBuffer();
+    //     const arrowData = await parquetToArrow(parquetData);
+    //     loadData(arrowData);
+    // });
 });
 
 // from https://gist.github.com/mhkeller/855ca5c0a6582e4ead7d36e6f8169fdd
 // const arrow = require("apache-arrow");
-import arrow from 'https://cdn.jsdelivr.net/npm/apache-arrow@17.0.0/+esm'
+// import arrow from 'https://cdn.jsdelivr.net/npm/apache-arrow@17.0.0/+esm'
+import {tableToIPC, Table} from 'https://cdn.jsdelivr.net/npm/apache-arrow@17.0.0/+esm'
+// import apacheArrow from 'https://cdn.jsdelivr.net/npm/apache-arrow@17.0.0/+esm'
 // const { parseRecordBatch } = require("arrow-js-ffi");
 // import arrowJsFfi from 'https://cdn.jsdelivr.net/npm/arrow-js-ffi@0.4.2/+esm'
 import {parseRecordBatch} from 'https://cdn.jsdelivr.net/npm/arrow-js-ffi@0.4.2/+esm'
@@ -135,6 +166,8 @@ async function parquetToArrow(parquetData) {
 	const WASM_MEMORY = wasmMemory();
 
     console.log(parquetData);
+    console.log(Table);
+    console.log(tableToIPC);
 	const parquetUint8Array = new Uint8Array(parquetData);
 
 	const wasmArrowTable = readParquet(parquetUint8Array).intoFFI();
@@ -153,10 +186,12 @@ async function parquetToArrow(parquetData) {
 		recordBatches.push(recordBatch);
 	}
 
-	const table = new arrow.Table(recordBatches);
+	const table = new Table(recordBatches);
+	// const table = new apacheArrow.Table(recordBatches);
   
-  // Skip this step converting it to bytes if you just want the table
-	const ipcStream = arrow.tableToIPC(table, 'stream');
+    // Skip this step converting it to bytes if you just want the table
+	const ipcStream = tableToIPC(table, 'stream');
+	// const ipcStream = apacheArrow.tableToIPC(table, 'stream');
 	const bytes = Buffer.from(ipcStream, 'utf-8');
 
 	// VERY IMPORTANT! You must call `drop` on the Wasm table object when you're done using it
