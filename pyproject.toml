@@ -7,12 +7,13 @@ authors = [
 ]
 dependencies = [
     "ibis-framework[duckdb]>=9.0.0.dev665",
-    "ipykernel",
+    "ibis-widget",
+    "ipykernel>=6.29.5",
 ]
 requires-python = ">=3.9"
 readme = "README.md"
 license = {text = "MIT"}
 
+[tool.uv.sources]
+ibis-widget = { git = "https://github.com/NickCrews/ibis-widget.git", branch = "main" }
 
-[tool.pdm]
-distribution = false
