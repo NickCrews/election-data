@@ -1,2 +1,4 @@
 def test_district(t):
-    assert not (t.district == "NULL").any().execute()
+    from election_data.tests.common import check_strings
+
+    check_strings(t.district)
