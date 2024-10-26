@@ -3,6 +3,8 @@ import enum
 import ibis
 from ibis.expr import types as ir
 
+from election_data import tests as tests
+from election_data import util as util
 from election_data._mode import clean_mode as clean_mode
 
 
@@ -112,56 +114,11 @@ class StatePo(enum.StrEnum):
 assert len(StatePo) == 51
 
 
-class Mode(enum.StrEnum):
-    ABSENTEE = "ABSENTEE"
-    EARLY = "EARLY"
-
-
-def make_results(
-    t: ibis.Table,
-    *,
-    year: ir.IntegerValue | int,
-    date: ir.DateValue | str,
-    state_po: ir.StringValue | str,
-    county_name: ir.StringValue,
-    county_fips: ir.StringValue,
-    jurisdiction_name: ir.StringValue,
-    jurisdiction_fips: ir.StringValue,
-    district: ir.StringValue,
-    office: ir.StringValue,
-    magnitude: ir.IntegerValue | int,
-    special: ir.BooleanValue | bool,
-    stage: ir.StringValue,
-    precinct: ir.StringValue,
-    writein: ir.BooleanValue | bool,
-    candidate: ir.StringValue,
-    party_detailed: ir.StringValue,
-    party_simplified: ir.StringValue,
-    mode: ir.StringValue,
-    votes: ir.StringValue,
-    readme_check: ir.BooleanValue | bool,
-) -> ResultsTable:
-    if isinstance(date, str):
-        date = ibis.date(date)
-    return t.select(
-        year=year,
-        date=date,
-        state_po=state_po,
-        county_name=county_name,
-        county_fips=county_fips,
-        jurisdiction_name=jurisdiction_name,
-        jurisdiction_fips=jurisdiction_fips,
-        district=district,
-        office=office,
-        magnitude=magnitude,
-        special=special,
-        stage=stage,
-        precinct=precinct,
-        writein=writein,
-        candidate=candidate,
-        party_detailed=party_detailed,
-        party_simplified=party_simplified,
-        mode=mode,
-        votes=votes,
-        readme_check=readme_check,
-    ).cast(RESULTS_SCHEMA)
+class PartySimplified(enum.StrEnum):
+    DEMOCRAT = "DEMOCRAT"
+    REPUBLICAN = "REPUBLICAN"
+    LIBERTARIAN = "LIBERTARIAN"
+    GREEN = "GREEN"
+    INDEPENDENT = "INDEPENDENT"
+    NONPARTISAN = "NONPARTISAN"
+    OTHER = "OTHER"

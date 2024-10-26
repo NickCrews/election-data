@@ -7,7 +7,7 @@ def pytest_addoption(parser) -> None:
 
 
 @pytest.fixture
-def data(request) -> ibis.Table:
+def t(request) -> ibis.Table:
     path = request.config.getoption("--data")
     if path.endswith(".csv"):
         return ibis.read_csv(path)

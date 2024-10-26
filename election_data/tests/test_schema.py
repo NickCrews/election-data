@@ -1,5 +1,4 @@
-import election_data as ed
+def test_schema(t):
+    from election_data import RESULTS_SCHEMA
 
-
-def test_schema(data):
-    assert data.schema() == ed.RESULTS_SCHEMA
+    assert t.schema() == RESULTS_SCHEMA
