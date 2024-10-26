@@ -122,3 +122,11 @@ class PartySimplified(enum.StrEnum):
     INDEPENDENT = "INDEPENDENT"
     NONPARTISAN = "NONPARTISAN"
     OTHER = "OTHER"
+
+
+class Stage(enum.StrEnum):
+    PRI = "PRI"
+    GEN = "GEN"
+    GEN_RUNOFF = "GEN RUNOFF"
+    GEN_RECOUNT = "GEN RECOUNT"
+    GEN_RECOUNT_2 = "GEN RECOUNT 2"

@@ -2,11 +2,21 @@ import dataclasses
 
 
 @dataclasses.dataclass
-class SchemaMismatchError:
+class SchemaMismatchError(Exception):
     extra: set = None
     missing: set = None
     conflicts: set = None
     out_of_order: set = None
+
+    def __str__(self):
+        return "\n".join(
+            [
+                f"Extra columns: {self.extra}",
+                f"Missing columns: {self.missing}",
+                f"Conflicting columns: {self.conflicts}",
+                f"Columns out of order: {self.out_of_order}",
+            ]
+        )
 
 
 def test_schema(t):
