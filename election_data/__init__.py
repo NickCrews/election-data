@@ -12,6 +12,7 @@ class ResultsTable(ibis.Table):
     year = ir.IntegerColumn
     date = ir.DateColumn
     state_po = ir.StringColumn
+    """Postal code for the state (or DC). See `StatePo`."""
     county_name = ir.StringColumn
     county_fips = ir.StringColumn
     jurisdiction_name = ir.StringColumn
@@ -21,6 +22,7 @@ class ResultsTable(ibis.Table):
     magnitude = ir.IntegerColumn
     special = ir.BooleanColumn
     stage = ir.StringColumn
+    """Primary, general, etc. See `Stage`."""
     precinct = ir.StringColumn
     writein = ir.BooleanColumn
     candidate = ir.StringColumn
@@ -58,6 +60,8 @@ RESULTS_SCHEMA = ibis.schema(
 
 
 class StatePo(enum.StrEnum):
+    """PO codes (eg AK, AL, etc) for all 50 states, plus DC."""
+
     AK = "AK"
     AL = "AL"
     AR = "AR"
@@ -115,6 +119,16 @@ assert len(StatePo) == 51
 
 
 class PartySimplified(enum.StrEnum):
+    """Democrat, Republican, etc.
+
+    If this value is eg DEMOCRAT, then the party_detailed value should also
+    be DEMOCRAT. Same thing for REPUBLICAN, etc: If party_simplified is REPUBLICAN,
+    then party_detailed should be REPUPLICAN too.
+
+    When party_simplified is OTHER, the party_detailed value should be something
+    else, eg "WORKING FAMILIES PARTY" or "CONSTITUTION PARTY".
+    """
+
     DEMOCRAT = "DEMOCRAT"
     REPUBLICAN = "REPUBLICAN"
     LIBERTARIAN = "LIBERTARIAN"
@@ -125,8 +139,25 @@ class PartySimplified(enum.StrEnum):
 
 
 class Stage(enum.StrEnum):
+    """Primary, general, etc."""
+
     PRI = "PRI"
     GEN = "GEN"
     GEN_RUNOFF = "GEN RUNOFF"
     GEN_RECOUNT = "GEN RECOUNT"
     GEN_RECOUNT_2 = "GEN RECOUNT 2"
+
+
+class Office(enum.StrEnum):
+    """The more common office types.
+
+    Some states have unique offices that don't fit into these categories,
+    eg "COUNTY 132 COMMISSIONER"
+    """
+
+    US_PRESIDENT = "US PRESIDENT"
+    US_SENATE = "US SENATE"
+    US_HOUSE = "US HOUSE"
+    GOVERNOR = "GOVERNOR"
+    STATE_SENATE = "STATE SENATE"
+    STATE_HOUSE = "STATE HOUSE"

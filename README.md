@@ -54,3 +54,8 @@ t
 
 See https://github.com/NickCrews/election-data/releases for
 available versions to download, or the notebooks for methodology.
+
+
+## Data Notes
+
+- CA doesn't have any US senate elections in 2020: https://github.com/MEDSL/2022-elections-official/issues/23
