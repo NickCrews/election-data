@@ -59,3 +59,6 @@ available versions to download, or the notebooks for methodology.
 ## Data Notes
 
 - CA doesn't have any US senate elections in 2020: https://github.com/MEDSL/2022-elections-official/issues/23
+- Finding the total votes for a candidate seems inconsistent depending on if you
+  find it either from where _.mode=="TOTAL" or from _.votes.sum(where=_.mode != "TOTAL").
+  See tests/test_mode.py for an example.
