@@ -44,7 +44,7 @@ RESULTS_SCHEMA = ibis.schema(
         "jurisdiction_fips": "string",
         "district": "string",
         "office": "string",
-        "magnitude": "int64",
+        "magnitude": "int8",
         "special": "boolean",
         "stage": "string",
         "precinct": "string",
