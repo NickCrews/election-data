@@ -1,5 +1,6 @@
 from election_data.tests.test_candidate import test_candidate
 from election_data.tests.test_district import test_district
+from election_data.tests.test_office import test_all as test_office
 from election_data.tests.test_party import test_party
 from election_data.tests.test_schema import test_schema
 from election_data.tests.test_state import test_state
@@ -13,3 +14,4 @@ def test_all(t):
     test_state(t)
     test_year(t)
     test_district(t)
+    test_office(t)

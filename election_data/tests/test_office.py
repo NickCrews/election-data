@@ -1,3 +1,56 @@
+import pytest
+
+
+@pytest.mark.skip
+def test_all(t):
+    test_normalized(t)
+    test_presidential(t)
+    test_us_senate(t)
+
+
+def check_no_bad(bad):
+    assert bad.count().execute() == 0, bad.value_counts().execute()
+
+
+def test_normalized(t):
+    bad_office = t.filter(t.office.strip().upper() != t.office).office
+    check_no_bad(bad_office)
+
+    non_norm_treasurer = t.filter(
+        t.office.contains("TREASURER"),
+        t.office.contains("STATE"),
+        t.office != "STATE TREASURER",
+    ).office
+    check_no_bad(non_norm_treasurer)
+
+    non_norm_house = t.filter(
+        t.office.contains("HOUSE"),
+        ~t.office.contains("COURTHOUSE"),
+        t.office.length() < 30,  # remove ballot measures, which are verbose
+        t.office != "US HOUSE",
+        t.office != "STATE HOUSE",
+    ).office
+    check_no_bad(non_norm_house)
+
+    non_norm_senate = t.filter(
+        t.office.contains("SENATE"),
+        t.office.length() < 30,  # remove ballot measures, which are verbose
+        t.office != "US SENATE",
+        t.office != "STATE SENATE",
+    ).office
+    check_no_bad(non_norm_senate)
+
+    non_norm_governor = t.filter(
+        t.office.contains("GOV"),
+        t.office.length() < 30,  # remove ballot measures, which are verbose
+        t.office != "GOVERNOR",
+        t.office != "LIEUTENANT GOVERNOR",
+        t.office != "GOVERNORS COUNCIL",
+        t.office != "GOVERNOR'S COUNCIL",
+    ).office
+    check_no_bad(non_norm_governor)
+
+
 def test_presidential(t):
     """For every presidential year, there should be presidential results for every state."""
     from election_data import StatePo
