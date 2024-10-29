@@ -44,7 +44,10 @@ RESULTS_SCHEMA = ibis.schema(
         "jurisdiction_fips": "string",
         "district": "string",
         "office": "string",
-        "magnitude": "int8",
+        # if you roundtrip an int8 to parquet and back, the dtype changes
+        # to int32. This looks like a bug on the ibis or duckdb side.
+        # Whatever, just lean into it.
+        "magnitude": "int32",
         "special": "boolean",
         "stage": "string",
         "precinct": "string",
