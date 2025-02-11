@@ -17,7 +17,22 @@ Cleaned and normalized US election data:
 
 This was derived from https://github.com/MEDSL, but I found that
 data was messy and in disparate places. This is an attempt
-to merge it into one single easy to get place. For example, it's now super easy to get going:
+to merge it into one single easy to get place.
+
+## Testing
+
+This also adds data quality tests, eg
+- the state code is one of the 51 two-letter postal codes
+- strings have no trailing whitespace
+- etc
+See the `election_data/tests/` directory for details on the checks.
+
+## Usage
+
+See https://github.com/NickCrews/election-data/releases for
+available versions of cleaned data to download.
+
+For example, it's now super easy to get going by downloading directly from python:
 
 ```python
 import ibis
@@ -51,10 +66,6 @@ t
 │     … │ …          │ …        │ …           │ …           │ …                 │ …                 │ …         │ …                             │         … │ …       │ …      │ …                      │ …       │ …         │ …              │ …            │ …      │ …            │
 └───────┴────────────┴──────────┴─────────────┴─────────────┴───────────────────┴───────────────────┴───────────┴───────────────────────────────┴───────────┴─────────┴────────┴────────────────────────┴─────────┴───────────┴────────────────┴──────────────┴────────┴──────────────┘
 ```
-
-See https://github.com/NickCrews/election-data/releases for
-available versions to download, or the notebooks for methodology.
-
 
 ## Data Notes
 
